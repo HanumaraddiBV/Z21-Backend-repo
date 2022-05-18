@@ -2,7 +2,7 @@ const express = require("express");
 
 const router = express.Router();
 const Data = require("../models/mutulfundData.model");
-
+/////////
 //get method for all collection
 router.get("/", async (req, res) => {
   try {
