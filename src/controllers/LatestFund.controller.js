@@ -5,6 +5,34 @@ const Data = require("../models/mutulfundData.model");
 const Funds = require("../models/LatsetFund.model")
 
 //get method for all collection
+router.get("/", async (req, res) => {
+  try {
+    const data = await Data.find().lean().exec();
+    // console.log('data:', data)
+    let updated
+    for(let i = 0; i < data.length; i++){
+        for(let j = i+1; j< data.length;j++){
+            if(data[i].code == data[j].code && data[i].date == "04-Apr-2022" && data[j].date == "11-Apr-2022"){
+            let stdDiv_value = ((((data[j].netAssetValue -data[i].netAssetValue)/data[j].netAssetValue) * 100).toFixed(2) + "%")
+            let latest_return = ((data[j].netAssetValue -data[i].netAssetValue)/data[j].netAssetValue).toFixed(6)
+            updated = await Funds.create({
+                code: data[i].code,
+                name: data[i].name,
+                ISIN: data[i].ISIN,
+                standardDiv: stdDiv_value,
+                netAssetValue: data[j].netAssetValue,
+                latest_return:latest_return,
+            })
+        }
+        }
+    }
+   let funds_list = await Funds.find().lean().exec()
+    return res.status(200).send(funds_list);
+  } catch (e) {
+    return res.status(500).send({ message: e.message });
+  }
+});
+
 router.get("/funds", async (req, res) => {
   try {
     const data = await Data.find().lean().exec();
