@@ -9,13 +9,14 @@ router.get("/", async (req, res) => {
   try {
     const data = await Data.find().lean().exec();
     // console.log('data:', data)
-    let updated
+    let funds_list = []
+    
     for(let i = 0; i < data.length; i++){
         for(let j = i+1; j< data.length;j++){
             if(data[i].code == data[j].code && data[i].date == "04-Apr-2022" && data[j].date == "11-Apr-2022"){
             let stdDiv_value = ((((data[j].netAssetValue -data[i].netAssetValue)/data[j].netAssetValue) * 100).toFixed(2) + "%")
             let latest_return = ((data[j].netAssetValue -data[i].netAssetValue)/data[j].netAssetValue).toFixed(6)
-            updated = await Funds.create({
+           let updated = await Funds.create({
                 code: data[i].code,
                 name: data[i].name,
                 ISIN: data[i].ISIN,
@@ -23,11 +24,11 @@ router.get("/", async (req, res) => {
                 netAssetValue: data[j].netAssetValue,
                 latest_return:latest_return,
             })
+            funds_list.push(updated)
         }
         }
     }
-   let funds_list = await Funds.find().lean().exec()
-    return res.status(200).send(funds_list);
+    return res.status(201).send(funds_list);
   } catch (e) {
     return res.status(500).send({ message: e.message });
   }

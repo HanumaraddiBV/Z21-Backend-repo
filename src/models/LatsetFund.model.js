@@ -2,7 +2,7 @@ const mongoose = require("mongoose");
 
 const LatestFundDataSchema = new mongoose.Schema(
   {
-    code: { type: Number, required: true },
+    code: { type: Number, required: true ,unique: true},
     name: { type: String, required: true },
     ISIN: { type: String, required: true },
     standardDiv: { type: String, required: true },
